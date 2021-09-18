@@ -1,4 +1,5 @@
 import { text } from "stream/consumers";
+import StageData, { StageData1 } from "../stage/stage-data";
 import TextObject, { Attribute } from "../types/text-object";
 
 export default class MainScene extends Phaser.Scene {
@@ -27,24 +28,7 @@ export default class MainScene extends Phaser.Scene {
   
     create(): void {
       var bg = this.addBg(0xDDDDDD);
-      var stage = this.addStage(36, 36, 10, 10);
-      const hero = this.addChar(0, 0, "字");
-      var heroObj = new TextObject(hero, 1, 1, [Attribute.YOU, Attribute.PUSH], true);
-      const hero2 = this.addChar(0, 0, "字");
-      var hero2Obj = new TextObject(hero2, 3, 3, [Attribute.YOU, Attribute.PUSH], true);
-      this.textObjects.push(heroObj);
-      this.textObjects.push(hero2Obj);
-      for (var i = 0; i < 10; i++){
-        const kabe = this.addChar(0,0, "壁")
-        const kabeObj = new TextObject(kabe, i, 0, [Attribute.STOP], true);
-        this.textObjects.push(kabeObj);
-      }
-      const kabe = this.addChar(0,0, "壁")
-      const kabeObj = new TextObject(kabe, 5, 5, [Attribute.STOP], true);
-      this.textObjects.push(kabeObj);
-      const mono = this.addChar(0,0, "物")
-      const monoObj = new TextObject(mono, 7, 7, [Attribute.PUSH], true);
-      this.textObjects.push(monoObj);
+      this.textObjects = this.loadStageData(new StageData1());
       var label = this.addChar(400,200, "矢印キーで移動")
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -103,6 +87,29 @@ export default class MainScene extends Phaser.Scene {
       var textObj = this.add.text(x, y, text).setFontSize(settings.CHAR_SIZE).setFontFamily("Yu Gothic");
       container.add(textObj);
       return container;
+    }
+    private loadStageData(stageData: StageData): TextObject[] {
+      var textObjects: TextObject[] = [];
+      this.addStage(stageData.offsetX, stageData.offsetY, stageData.width, stageData.height);
+      for(var j = 0; j < stageData.height; j++) {
+        for(var i = 0; i < stageData.width; i ++) {
+          const tile = stageData.data[j][i];
+          if (tile == "字") {
+            const label = this.addChar(0, 0, "字");
+            var obj = new TextObject(label, i, j, [Attribute.YOU], true)
+            textObjects.push(obj);
+          } else if (tile == "壁") {
+            const label = this.addChar(0, 0, "壁");
+            var obj = new TextObject(label, i, j, [Attribute.STOP], true)
+            textObjects.push(obj);
+          } else if (tile == "物") {
+            const label = this.addChar(0, 0, "物");
+            var obj = new TextObject(label, i, j, [Attribute.PUSH], true)
+            textObjects.push(obj);
+          }                
+        }
+      }
+      return textObjects;
     }
     private renderTextObjects(textObjects: TextObject[]): void {
       textObjects.forEach(
