@@ -1,6 +1,7 @@
 import { StageData1 } from "../stage/stage-data";
 
 export default class WorldScene extends Phaser.Scene {
+    
     constructor() {
         super({
             key: 'World',
@@ -20,5 +21,8 @@ export default class WorldScene extends Phaser.Scene {
         textStage2.on('pointerdown', () => {
             this.scene.start('Main', {stageId: 2});
         });
+    }
+    update(): void {
+        
     }
 }

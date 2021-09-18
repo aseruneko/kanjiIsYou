@@ -12,6 +12,7 @@ export default class MainScene extends Phaser.Scene {
     private keyRight: Phaser.Input.Keyboard.Key | undefined;
     private keyDown: Phaser.Input.Keyboard.Key | undefined;
     private keyUp: Phaser.Input.Keyboard.Key | undefined;
+    private keyEscape: Phaser.Input.Keyboard.Key | undefined;
     private keyLeftPushed: boolean = false;
     private keyRightPushed: boolean = false;
     private keyDownPushed: boolean = false;
@@ -21,6 +22,7 @@ export default class MainScene extends Phaser.Scene {
     private attemptToMove: Direction = Direction.NEUTRAL;
     private stageData: StageData;
     private stageId: number | undefined;
+    private menuOpen: boolean = false;
     constructor(data: any) {
       super({
         key: 'Main',
@@ -30,47 +32,58 @@ export default class MainScene extends Phaser.Scene {
     }
   
     create(data: any): void {
+      this.keyLeftPushed = false;
+      this.keyRightPushed = false;
+      this.keyDownPushed = false;
+      this.keyUpPushed = false;
+      this.attemptToMove = Direction.NEUTRAL;
+      this.menuOpen = false;
       this.stageId = data.stageId;
       const stageDataFacotry = new StageDataFactory;
       this.stageData = stageDataFacotry.load(this.stageId!);
       var bg = this.addBg(0xDDDDDD);
       this.textObjects = this.loadStageData(this.stageData);
-      var label = this.addChar(400,200, "矢印キーで移動")
+      var label = this.addChar(400,200, "矢印キーで移動\nESCキーでメニュー")
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
       this.keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
       this.keyDown = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
-
+      this.keyEscape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     }
     update(): void {
-      // console.log(this.acorn!.x, this.acorn!.y);
-      this.attemptToMove = Direction.NEUTRAL;
-      if (this.keyLeft!.isDown && !this.keyLeftPushed) {
-        this.attemptToMove = Direction.WEST;
-        this.keyLeftPushed = true;
-      } else if (this.keyLeft!.isUp && this.keyLeftPushed) {
-        this.keyLeftPushed = false;
+      if(!this.menuOpen) {
+        if (this.keyEscape!.isDown) {
+          this.menuOpen = true;
+          this.scene.launch('MainMenu');
+        }
+        this.attemptToMove = Direction.NEUTRAL;
+        if (this.keyLeft!.isDown && !this.keyLeftPushed) {
+          this.attemptToMove = Direction.WEST;
+          this.keyLeftPushed = true;
+        } else if (this.keyLeft!.isUp && this.keyLeftPushed) {
+          this.keyLeftPushed = false;
+        }
+        if (this.keyRight!.isDown && !this.keyRightPushed) {
+          this.attemptToMove = Direction.EAST;
+          this.keyRightPushed = true;
+        } else if (this.keyRight!.isUp && this.keyRightPushed) {
+          this.keyRightPushed = false;
+        }
+        if (this.keyUp!.isDown && !this.keyUpPushed) {
+          this.attemptToMove = Direction.NORTH;
+          this.keyUpPushed = true;
+        } else if (this.keyUp!.isUp && this.keyUpPushed) {
+          this.keyUpPushed = false;
+        }
+        if (this.keyDown!.isDown && !this.keyDownPushed) {
+          this.attemptToMove = Direction.SOUTH;
+          this.keyDownPushed = true;
+        } else if (this.keyDown!.isUp && this.keyDownPushed) {
+          this.keyDownPushed = false;
+        }
+        this.executeMove(this.textObjects, this.attemptToMove);
+        this.renderTextObjects(this.textObjects);
       }
-      if (this.keyRight!.isDown && !this.keyRightPushed) {
-        this.attemptToMove = Direction.EAST;
-        this.keyRightPushed = true;
-      } else if (this.keyRight!.isUp && this.keyRightPushed) {
-        this.keyRightPushed = false;
-      }
-      if (this.keyUp!.isDown && !this.keyUpPushed) {
-        this.attemptToMove = Direction.NORTH;
-        this.keyUpPushed = true;
-      } else if (this.keyUp!.isUp && this.keyUpPushed) {
-        this.keyUpPushed = false;
-      }
-      if (this.keyDown!.isDown && !this.keyDownPushed) {
-        this.attemptToMove = Direction.SOUTH;
-        this.keyDownPushed = true;
-      } else if (this.keyDown!.isUp && this.keyDownPushed) {
-        this.keyDownPushed = false;
-      }
-      this.executeMove(this.textObjects, this.attemptToMove);
-      this.renderTextObjects(this.textObjects);
     }
     private addBg(color: number): Phaser.GameObjects.Rectangle {
       return this.add.rectangle(this.SCENE_X, this.SCENE_Y, this.SCENE_WIDTH, this.SCENE_HEIGHT, color)
