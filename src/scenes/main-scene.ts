@@ -17,6 +17,7 @@ export default class MainScene extends Phaser.Scene {
     private keyUpPushed: boolean = false;
     private setting: Settings = new Settings;
     private textObjects: TextObject[] = [];
+    private attemptToMove: Direction = Direction.NEUTRAL;
     constructor() {
       super({
         key: 'Main',
@@ -30,6 +31,14 @@ export default class MainScene extends Phaser.Scene {
       const hero = this.addChar(0, 0, "字");
       var heroObj = new TextObject(hero, 1, 1, [Attribute.YOU], true);
       this.textObjects.push(heroObj);
+      for (var i = 0; i < 10; i++){
+        const kabe = this.addChar(0,0, "壁")
+        const kabeObj = new TextObject(kabe, i, 0, [Attribute.WALL], true);
+        this.textObjects.push(kabeObj);
+      }
+      const kabe = this.addChar(0,0, "壁")
+      const kabeObj = new TextObject(kabe, 5, 5, [Attribute.WALL], true);
+      this.textObjects.push(kabeObj);
       var label = this.addChar(400,200, "矢印キーで移動")
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -39,31 +48,32 @@ export default class MainScene extends Phaser.Scene {
     }
     update(): void {
       // console.log(this.acorn!.x, this.acorn!.y);
-      var hero = this.textObjects.find((obj) => obj.attribute.includes( Attribute.YOU));
+      this.attemptToMove = Direction.NEUTRAL;
       if (this.keyLeft!.isDown && !this.keyLeftPushed) {
-        hero!.x -= 1;
+        this.attemptToMove = Direction.WEST;
         this.keyLeftPushed = true;
       } else if (this.keyLeft!.isUp && this.keyLeftPushed) {
         this.keyLeftPushed = false;
       }
       if (this.keyRight!.isDown && !this.keyRightPushed) {
-        hero!.x += 1;
+        this.attemptToMove = Direction.EAST;
         this.keyRightPushed = true;
       } else if (this.keyRight!.isUp && this.keyRightPushed) {
         this.keyRightPushed = false;
       }
       if (this.keyUp!.isDown && !this.keyUpPushed) {
-        hero!.y -= 1;
+        this.attemptToMove = Direction.NORTH;
         this.keyUpPushed = true;
       } else if (this.keyUp!.isUp && this.keyUpPushed) {
         this.keyUpPushed = false;
       }
       if (this.keyDown!.isDown && !this.keyDownPushed) {
-        hero!.y += 1;
+        this.attemptToMove = Direction.SOUTH;
         this.keyDownPushed = true;
       } else if (this.keyDown!.isUp && this.keyDownPushed) {
         this.keyDownPushed = false;
       }
+      this.executeMove(this.textObjects, this.attemptToMove);
       this.renderTextObjects(this.textObjects);
     }
     private addBg(color: number): Phaser.GameObjects.Rectangle {
@@ -97,6 +107,20 @@ export default class MainScene extends Phaser.Scene {
         }
       )
     }
+    private executeMove(textObjects: TextObject[], attemptToMove: Direction) {
+      textObjects.filter((obj) => obj.attribute.includes(Attribute.YOU)).forEach(obj => {
+        var attemptX = obj.x;
+        var attemptY = obj.y;
+        if (attemptToMove == Direction.EAST) attemptX += 1;
+        if (attemptToMove == Direction.WEST) attemptX -= 1;
+        if (attemptToMove == Direction.NORTH) attemptY -= 1;
+        if (attemptToMove == Direction.SOUTH) attemptY += 1;
+        if (textObjects.every(tobj => !(tobj.x == attemptX && tobj.y == attemptY && tobj.attribute.includes(Attribute.WALL)))) {
+          obj.x = attemptX;
+          obj.y = attemptY;
+        }
+      })
+    }
   }
 
 export class Settings {
@@ -121,4 +145,12 @@ export class ColorPalette {
     this.bgStroke = 0xCCCCCC;
     this.bgFill = 0x000000;
   }
+}
+
+export enum Direction {
+  NEUTRAL,
+  NORTH,
+  EAST,
+  WEST,
+  SOUTH
 }
