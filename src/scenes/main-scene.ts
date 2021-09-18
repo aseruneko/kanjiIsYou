@@ -30,7 +30,10 @@ export default class MainScene extends Phaser.Scene {
       var stage = this.addStage(36, 36, 10, 10);
       const hero = this.addChar(0, 0, "字");
       var heroObj = new TextObject(hero, 1, 1, [Attribute.YOU], true);
+      const hero2 = this.addChar(0, 0, "字");
+      var hero2Obj = new TextObject(hero2, 3, 3, [Attribute.YOU], true);
       this.textObjects.push(heroObj);
+      this.textObjects.push(hero2Obj);
       for (var i = 0; i < 10; i++){
         const kabe = this.addChar(0,0, "壁")
         const kabeObj = new TextObject(kabe, i, 0, [Attribute.WALL], true);
