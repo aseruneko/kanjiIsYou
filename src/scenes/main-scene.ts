@@ -137,7 +137,6 @@ export default class MainScene extends Phaser.Scene {
       if (direction == Direction.SOUTH){
          toY = fromY + 1; 
         }
-        console.log(obj);
       var toObj = allObj.filter(tobj => tobj.x == toX && tobj.y == toY)
       if (toObj.length > 0) {
         var stopObj = toObj.filter(tobj => tobj.attribute.includes(Attribute.STOP))
