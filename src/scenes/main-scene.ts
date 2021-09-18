@@ -19,16 +19,20 @@ export default class MainScene extends Phaser.Scene {
     private setting: Settings = new Settings;
     private textObjects: TextObject[] = [];
     private attemptToMove: Direction = Direction.NEUTRAL;
-    constructor() {
+    private stageData: StageData;
+    constructor(data: any) {
       super({
         key: 'Main',
         physics: { arcade: { debug: true } },
       });
+      this.stageData = new StageData;
     }
   
-    create(): void {
+    create(data: any): void {
+      console.log(data);
+      this.stageData = new StageData1();
       var bg = this.addBg(0xDDDDDD);
-      this.textObjects = this.loadStageData(new StageData1());
+      this.textObjects = this.loadStageData(this.stageData);
       var label = this.addChar(400,200, "矢印キーで移動")
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
