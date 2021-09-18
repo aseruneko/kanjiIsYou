@@ -29,19 +29,22 @@ export default class MainScene extends Phaser.Scene {
       var bg = this.addBg(0xDDDDDD);
       var stage = this.addStage(36, 36, 10, 10);
       const hero = this.addChar(0, 0, "字");
-      var heroObj = new TextObject(hero, 1, 1, [Attribute.YOU], true);
+      var heroObj = new TextObject(hero, 1, 1, [Attribute.YOU, Attribute.PUSH], true);
       const hero2 = this.addChar(0, 0, "字");
-      var hero2Obj = new TextObject(hero2, 3, 3, [Attribute.YOU], true);
+      var hero2Obj = new TextObject(hero2, 3, 3, [Attribute.YOU, Attribute.PUSH], true);
       this.textObjects.push(heroObj);
       this.textObjects.push(hero2Obj);
       for (var i = 0; i < 10; i++){
         const kabe = this.addChar(0,0, "壁")
-        const kabeObj = new TextObject(kabe, i, 0, [Attribute.WALL], true);
+        const kabeObj = new TextObject(kabe, i, 0, [Attribute.STOP], true);
         this.textObjects.push(kabeObj);
       }
       const kabe = this.addChar(0,0, "壁")
-      const kabeObj = new TextObject(kabe, 5, 5, [Attribute.WALL], true);
+      const kabeObj = new TextObject(kabe, 5, 5, [Attribute.STOP], true);
       this.textObjects.push(kabeObj);
+      const mono = this.addChar(0,0, "物")
+      const monoObj = new TextObject(mono, 7, 7, [Attribute.PUSH], true);
+      this.textObjects.push(monoObj);
       var label = this.addChar(400,200, "矢印キーで移動")
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -110,21 +113,59 @@ export default class MainScene extends Phaser.Scene {
         }
       )
     }
-    private executeMove(textObjects: TextObject[], attemptToMove: Direction) {
+    private executeMove(textObjects: TextObject[], attemptToMove: Direction): void {
       textObjects.filter((obj) => obj.attribute.includes(Attribute.YOU)).forEach(obj => {
-        var attemptX = obj.x;
-        var attemptY = obj.y;
-        if (attemptToMove == Direction.EAST) attemptX += 1;
-        if (attemptToMove == Direction.WEST) attemptX -= 1;
-        if (attemptToMove == Direction.NORTH) attemptY -= 1;
-        if (attemptToMove == Direction.SOUTH) attemptY += 1;
-        if (textObjects.every(tobj => !(tobj.x == attemptX && tobj.y == attemptY && tobj.attribute.includes(Attribute.WALL)))) {
-          obj.x = attemptX;
-          obj.y = attemptY;
-        }
-      })
+        this.attemptMove(obj, textObjects, obj.x, obj.y, attemptToMove)
+      });
     }
-  }
+
+    private attemptMove(obj: TextObject, allObj: TextObject[], fromX: number, fromY: number, direction: Direction): boolean {
+      var toX = fromX;
+      var toY = fromY;
+      if(direction == Direction.NEUTRAL) {
+        return true;
+      }
+      if (direction == Direction.EAST) {
+        toX = fromX + 1;
+      }
+      if (direction == Direction.WEST){
+         toX = fromX - 1; 
+        }
+      if (direction == Direction.NORTH){
+         toY = fromY - 1; 
+        }
+      if (direction == Direction.SOUTH){
+         toY = fromY + 1; 
+        }
+        console.log(obj);
+      var toObj = allObj.filter(tobj => tobj.x == toX && tobj.y == toY)
+      if (toObj.length > 0) {
+        var stopObj = toObj.filter(tobj => tobj.attribute.includes(Attribute.STOP))
+        if (stopObj.length > 0) {
+          return false;
+        } else {
+          var pushObj = toObj.filter(tobj => tobj.attribute.includes(Attribute.PUSH));
+          if (pushObj.length == 0) {
+            obj.x = toX;
+            obj.y = toY;
+            return true;
+          } else {
+            if (pushObj.every(tobj => {return this.attemptMove(tobj, allObj, tobj.x, tobj.y, direction)})) {
+              obj.x = toX;
+              obj.y = toY;
+              return true;
+            } else {
+              return false;
+            }
+          }
+        }
+      } else {
+        obj.x = toX;
+        obj.y = toY;
+        return true;
+      }
+    }
+}
 
 export class Settings {
   RENDER_OFFSET_X: number

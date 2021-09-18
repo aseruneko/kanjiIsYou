@@ -15,5 +15,6 @@ export default class TextObject {
 
 export enum Attribute {
     YOU,
-    WALL,
+    STOP,
+    PUSH,
 }
