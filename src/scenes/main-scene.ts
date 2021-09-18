@@ -1,5 +1,5 @@
 import { text } from "stream/consumers";
-import StageData, { StageData1 } from "../stage/stage-data";
+import StageData, { StageData1, StageDataFactory } from "../stage/stage-data";
 import TextObject, { Attribute } from "../types/text-object";
 
 export default class MainScene extends Phaser.Scene {
@@ -20,6 +20,7 @@ export default class MainScene extends Phaser.Scene {
     private textObjects: TextObject[] = [];
     private attemptToMove: Direction = Direction.NEUTRAL;
     private stageData: StageData;
+    private stageId: number | undefined;
     constructor(data: any) {
       super({
         key: 'Main',
@@ -29,8 +30,9 @@ export default class MainScene extends Phaser.Scene {
     }
   
     create(data: any): void {
-      console.log(data);
-      this.stageData = new StageData1();
+      this.stageId = data.stageId;
+      const stageDataFacotry = new StageDataFactory;
+      this.stageData = stageDataFacotry.load(this.stageId!);
       var bg = this.addBg(0xDDDDDD);
       this.textObjects = this.loadStageData(this.stageData);
       var label = this.addChar(400,200, "矢印キーで移動")
