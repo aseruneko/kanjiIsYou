@@ -9,8 +9,8 @@ export default class WorldScene extends Phaser.Scene {
     }
 
     create(): void {
-        const textStage1 = this.add.text(10, 10, 'Stage1');
-        const textStage2 = this.add.text(10, 50, 'Stage2');
+        const textStage1 = this.add.text(10, 10, 'Stage1').setFontFamily('ltgFont');
+        const textStage2 = this.add.text(10, 50, 'Stage2').setFontFamily('ltgFont');
 
         textStage1.setInteractive();
         textStage2.setInteractive();
@@ -23,6 +23,6 @@ export default class WorldScene extends Phaser.Scene {
         });
     }
     update(): void {
-        
+
     }
 }

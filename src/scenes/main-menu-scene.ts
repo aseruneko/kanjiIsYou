@@ -12,7 +12,7 @@ export default class MainMenuScene extends Phaser.Scene {
     }
     create(): void {
         this.add.rectangle(this.SCENE_X, this.SCENE_Y, this.SCENE_WIDTH, this.SCENE_HEIGHT, 0x000000, 0.5)
-        const text = this.add.text(50,50, 'もう一度ESCキーでステージ選択へ');
+        const text = this.add.text(50,50, 'もう一度ESCキーでステージ選択へ').setFontFamily('ltgFont');
         this.keyEscape = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
     }
     update(): void {

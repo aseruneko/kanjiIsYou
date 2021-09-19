@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
       this.stageData = stageDataFacotry.load(this.stageId!);
       var bg = this.addBg(0xDDDDDD);
       this.textObjects = this.loadStageData(this.stageData);
-      var label = this.addChar(400,200, "矢印キーで移動\nESCキーでメニュー")
+      var label = this.addChar(400,200, "矢印キーで移動\nESCキーでメニュー");
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
       this.keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -103,7 +103,7 @@ export default class MainScene extends Phaser.Scene {
       const settings = new Settings();
       const color = new ColorPalette();
       var container = this.add.container();
-      var textObj = this.add.text(x, y, text).setFontSize(settings.CHAR_SIZE).setFontFamily("Yu Gothic");
+      var textObj = this.add.text(x, y, text).setFontSize(settings.CHAR_SIZE).setFontFamily('ltgFont');
       container.add(textObj);
       return container;
     }
