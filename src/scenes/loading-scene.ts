@@ -25,7 +25,7 @@ export default class LoadingScene extends Phaser.Scene {
       this.load.audio('cursor2', '../assets/cursor2.mp3');
       this.load.audio('cursor3', '../assets/cursor3.mp3');
       this.load.audio('cursor4', '../assets/cursor4.mp3');
-      this.load.audio('simpleAndClean', '../assets/simple_and_clean.wav');
+      this.load.audio('simpleAndClean', '../assets/simple_and_clean.mp3');
       this.load.audio('jazzRelaxChillOut', '../assets/jazz_relax_chillout.m4a');
   
       //ロードに進捗があるたびに発生するイベント
