@@ -17,8 +17,11 @@ export default class MainMenuScene extends Phaser.Scene {
     }
     update(): void {
         if (this.keyEscape!.isDown) {
+            this.sound.stopAll();
+            this.sound.play('cursor2');
             this.scene.stop('Main');
             this.scene.start('World');
+            this.sound.play('simpleAndClean');
           }
     }
 }

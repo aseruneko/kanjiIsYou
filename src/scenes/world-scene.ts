@@ -16,9 +16,13 @@ export default class WorldScene extends Phaser.Scene {
         textStage2.setInteractive();
 
         textStage1.on('pointerdown', () => {
+            this.sound.stopAll();
+            this.sound.play('cursor2');
             this.scene.start('Main', {stageId: 1});
         });
         textStage2.on('pointerdown', () => {
+            this.sound.stopAll();
+            this.sound.play('cursor2');
             this.scene.start('Main', {stageId: 2});
         });
     }

@@ -32,6 +32,7 @@ export default class MainScene extends Phaser.Scene {
     }
   
     create(data: any): void {
+      this.sound.play('jazzRelaxChillOut');
       this.keyLeftPushed = false;
       this.keyRightPushed = false;
       this.keyDownPushed = false;
@@ -54,6 +55,7 @@ export default class MainScene extends Phaser.Scene {
       if(!this.menuOpen) {
         if (this.keyEscape!.isDown) {
           this.menuOpen = true;
+          this.sound.play('cursor2');
           this.scene.launch('MainMenu');
         }
         this.attemptToMove = Direction.NEUTRAL;
@@ -140,9 +142,18 @@ export default class MainScene extends Phaser.Scene {
       )
     }
     private executeMove(textObjects: TextObject[], attemptToMove: Direction): void {
+      var moveSuccesses: boolean[] = [];
       textObjects.filter((obj) => obj.attribute.includes(Attribute.YOU)).forEach(obj => {
-        this.attemptMove(obj, textObjects, obj.x, obj.y, attemptToMove)
+        const moveSuccess = this.attemptMove(obj, textObjects, obj.x, obj.y, attemptToMove)
+        moveSuccesses.push(moveSuccess);
       });
+      if(attemptToMove != Direction.NEUTRAL) {
+        if (moveSuccesses.every(ms => ms == false)) {
+          this.sound.play('cursor4');
+        } else {
+          this.sound.play('cursor3');
+        }
+      }
     }
 
     private attemptMove(obj: TextObject, allObj: TextObject[], fromX: number, fromY: number, direction: Direction): boolean {
