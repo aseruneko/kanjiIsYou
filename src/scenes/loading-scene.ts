@@ -21,7 +21,6 @@ export default class LoadingScene extends Phaser.Scene {
       const currentLoadingText = this.add.text(10, 10, loadingText(0)).setColor('0x000000').setFontFamily('ltgFont');
   
       //ファイルのロードをしていく
-      this.load.image('acorn', '../assets/picture.png');
       this.load.image('titleLogo', '../assets/titleLogo.png');
       this.load.audio('cursor2', '../assets/cursor2.mp3');
       this.load.audio('cursor3', '../assets/cursor3.mp3');
