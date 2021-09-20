@@ -23,6 +23,7 @@ export default class MainScene extends Phaser.Scene {
     private stageData: StageData;
     private stageId: number | undefined;
     private menuOpen: boolean = false;
+    private stageWin: boolean = false;
     constructor(data: any) {
       super({
         key: 'Main',
@@ -39,6 +40,7 @@ export default class MainScene extends Phaser.Scene {
       this.keyUpPushed = false;
       this.attemptToMove = Direction.NEUTRAL;
       this.menuOpen = false;
+      this.stageWin = false;
       this.stageId = data.stageId;
       const stageDataFacotry = new StageDataFactory;
       this.stageData = stageDataFacotry.load(this.stageId!);
@@ -53,10 +55,21 @@ export default class MainScene extends Phaser.Scene {
     }
     update(): void {
       if(!this.menuOpen) {
-        if (this.keyEscape!.isDown) {
+        if (this.keyEscape!.isDown && !this.stageWin) {
           this.menuOpen = true;
           this.sound.play('cursor2');
           this.scene.launch('MainMenu');
+        }
+        if(!this.stageWin) {
+          this.checkWin(this.textObjects);
+        }
+        if(this.stageWin) {
+          this.add.rectangle(this.SCENE_X,this.SCENE_Y,this.SCENE_WIDTH,this.SCENE_HEIGHT,0x000000,0.5);
+          this.add.text(0,0, 'win. press esc to continue');
+          if (this.keyEscape!.isDown) {
+            this.sound.stopAll();
+            this.scene.start('World');
+          }
         }
         this.attemptToMove = Direction.NEUTRAL;
         if (this.keyLeft!.isDown && !this.keyLeftPushed) {
@@ -127,7 +140,11 @@ export default class MainScene extends Phaser.Scene {
             const label = this.addChar(0, 0, "物");
             var obj = new TextObject(label, i, j, [Attribute.PUSH], true)
             textObjects.push(obj);
-          }                
+          } else if (tile == "終") {
+            const label = this.addChar(0, 0, "終");
+            var obj = new TextObject(label, i, j, [Attribute.WIN], true)
+            textObjects.push(obj);
+          }
         }
       }
       return textObjects;
@@ -200,6 +217,15 @@ export default class MainScene extends Phaser.Scene {
         obj.y = toY;
         return true;
       }
+    }
+
+    private checkWin(allObj: TextObject[]): void {
+        const winAchieved = allObj.filter(obj => obj.attribute.includes(Attribute.YOU))
+        .some(obj => allObj.some(tobj => tobj.x == obj.x && tobj.y == obj.y && tobj.attribute.includes(Attribute.WIN)));
+        if (winAchieved) {
+          this.stageWin = true;
+          this.sound.play('presenTitle1');
+        }
     }
 }
 
