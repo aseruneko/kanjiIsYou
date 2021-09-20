@@ -68,6 +68,7 @@ export default class MainScene extends Phaser.Scene {
           this.add.text(0,0, 'win. press esc to continue');
           if (this.keyEscape!.isDown) {
             this.sound.stopAll();
+            this.sound.play('simpleAndClean');
             this.scene.start('World');
           }
         }
@@ -128,8 +129,8 @@ export default class MainScene extends Phaser.Scene {
       for(var j = 0; j < stageData.height; j++) {
         for(var i = 0; i < stageData.width; i ++) {
           const tile = stageData.data[j][i];
-          if (tile == "字") {
-            const label = this.addChar(0, 0, "字");
+          if (tile == "君") {
+            const label = this.addChar(0, 0, "君");
             var obj = new TextObject(label, i, j, [Attribute.YOU], true)
             textObjects.push(obj);
           } else if (tile == "壁") {
@@ -224,6 +225,8 @@ export default class MainScene extends Phaser.Scene {
         .some(obj => allObj.some(tobj => tobj.x == obj.x && tobj.y == obj.y && tobj.attribute.includes(Attribute.WIN)));
         if (winAchieved) {
           this.stageWin = true;
+          const stageStr = 'stage' + this.stageId?.toString();
+          localStorage.setItem(stageStr, 'CLEAR');
           this.sound.play('presenTitle1');
         }
     }
