@@ -4,6 +4,7 @@ export default class WorldScene extends Phaser.Scene {
 
     private textStage1: Phaser.GameObjects.Text | undefined;
     private textStage2: Phaser.GameObjects.Text | undefined;
+    private textStageSoukoban1: Phaser.GameObjects.Text | undefined;
     
     constructor() {
         super({
@@ -19,7 +20,7 @@ export default class WorldScene extends Phaser.Scene {
         this.textStage1.on('pointerdown', () => {
             this.sound.stopAll();
             this.sound.play('cursor2');
-            this.scene.start('Main', {stageId: 1});
+            this.scene.start('Main', {stageId: '1'});
         });
 
         this.textStage2 = this.add.text(10, 50, 'Stage2').setFontFamily('ltgFont');
@@ -29,7 +30,17 @@ export default class WorldScene extends Phaser.Scene {
         this.textStage2.on('pointerdown', () => {
             this.sound.stopAll();
             this.sound.play('cursor2');
-            this.scene.start('Main', {stageId: 2});
+            this.scene.start('Main', {stageId: '2'});
+        });
+
+        this.textStageSoukoban1 = this.add.text(10, 90, '倉庫番1').setFontFamily('ltgFont');
+        const stageSoukoban1Clear = (localStorage.getItem('stageSoukoban1') == 'CLEAR')
+        if (stageSoukoban1Clear) this.textStageSoukoban1.setColor('#AAAAAA');
+        this.textStageSoukoban1.setInteractive();
+        this.textStageSoukoban1.on('pointerdown', () => {
+            this.sound.stopAll();
+            this.sound.play('cursor2');
+            this.scene.start('Main', {stageId: 'Soukoban1'});
         });
     }
     update(): void {
@@ -37,5 +48,7 @@ export default class WorldScene extends Phaser.Scene {
         if (stage1Clear) this.textStage1!.setColor('#AAAAAA');
         const stage2Clear = (localStorage.getItem('stage2') == 'CLEAR')
         if (stage2Clear) this.textStage2!.setColor('#AAAAAA');
+        const stageSoukoban1Clear = (localStorage.getItem('stageSoukoban1') == 'CLEAR')
+        if (stageSoukoban1Clear) this.textStageSoukoban1!.setColor('#AAAAAA');
     }
 }

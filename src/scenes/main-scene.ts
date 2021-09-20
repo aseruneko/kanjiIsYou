@@ -21,7 +21,7 @@ export default class MainScene extends Phaser.Scene {
     private textObjects: TextObject[] = [];
     private attemptToMove: Direction = Direction.NEUTRAL;
     private stageData: StageData;
-    private stageId: number | undefined;
+    private stageId: string | undefined;
     private menuOpen: boolean = false;
     private stageWin: boolean = false;
     constructor(data: any) {
@@ -46,7 +46,7 @@ export default class MainScene extends Phaser.Scene {
       this.stageData = stageDataFacotry.load(this.stageId!);
       var bg = this.addBg(0xDDDDDD);
       this.textObjects = this.loadStageData(this.stageData);
-      var label = this.addChar(400,200, "矢印キーで移動\nESCキーでメニュー");
+      var label = this.addChar(550,200, "矢印キーで\n移動\nESCキーで\nメニュー");
       this.keyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
       this.keyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
       this.keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
@@ -119,7 +119,7 @@ export default class MainScene extends Phaser.Scene {
       const settings = new Settings();
       const color = new ColorPalette();
       var container = this.add.container();
-      var textObj = this.add.text(x, y, text).setFontSize(settings.CHAR_SIZE).setFontFamily('ltgFont');
+      var textObj = this.add.text(x, y, text).setFontSize(settings.CHAR_SIZE).setFontFamily('ltgFont').setOrigin(0.5);
       container.add(textObj);
       return container;
     }
@@ -153,8 +153,8 @@ export default class MainScene extends Phaser.Scene {
     private renderTextObjects(textObjects: TextObject[]): void {
       textObjects.forEach(
         textObject => {
-          textObject.container.x = this.setting.RENDER_OFFSET_X + textObject.x * this.setting.MAP_TIP_SIZE;
-          textObject.container.y = this.setting.RENDER_OFFSET_Y + textObject.y * this.setting.MAP_TIP_SIZE;
+          textObject.container.x = this.stageData.offsetX + textObject.x * this.setting.MAP_TIP_SIZE;
+          textObject.container.y = this.stageData.offsetY + textObject.y * this.setting.MAP_TIP_SIZE;
           textObject.container.visible = textObject.visible;
         }
       )
@@ -225,7 +225,7 @@ export default class MainScene extends Phaser.Scene {
         .some(obj => allObj.some(tobj => tobj.x == obj.x && tobj.y == obj.y && tobj.attribute.includes(Attribute.WIN)));
         if (winAchieved) {
           this.stageWin = true;
-          const stageStr = 'stage' + this.stageId?.toString();
+          const stageStr = 'stage' + this.stageId;
           localStorage.setItem(stageStr, 'CLEAR');
           this.sound.play('presenTitle1');
         }
@@ -239,8 +239,8 @@ export class Settings {
   MAP_TIP_STROKE_SIZE: number
   CHAR_SIZE: number
   constructor() {
-    this.RENDER_OFFSET_X = 24;
-    this.RENDER_OFFSET_Y = 24;
+    this.RENDER_OFFSET_X = 36;
+    this.RENDER_OFFSET_Y = 36;
     this.MAP_TIP_SIZE = 32;
     this.CHAR_SIZE = 24;
     this.MAP_TIP_STROKE_SIZE = 2;
